@@ -40,6 +40,8 @@
    opacity: 0;
 }
 
+$delays: 100, 200, 300, 400;
+
 .fadeIn {
    &Left {
       animation: fadeInLeft 1s forwards;
@@ -55,6 +57,24 @@
 
    &Up {
       animation: fadeInUp 1s forwards;
+   }
+
+   @each $delay in $delays {
+      &Left--#{ $delay } {
+         animation: fadeInLeft 1s forwards #{$delay}ms;
+      }
+
+      &Right--#{ $delay } {
+         animation: fadeInRight 1s forwards #{$delay}ms;
+      }
+
+      &Down--#{ $delay } {
+         animation: fadeInDown 1s forwards #{$delay}ms;
+      }
+
+      &Up--#{ $delay } {
+         animation: fadeInUp 1s forwards #{$delay}ms;
+      }
    }
 }
 
