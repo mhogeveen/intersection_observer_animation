@@ -36,44 +36,80 @@
    width: 20%;
 }
 
-[data-animate] {
+// Standard styles for the to-be animated elements
+div[data-animate] {
    opacity: 0;
+
+   @media (max-width: 767px) {
+      animation-delay: 0ms;
+   }
 }
 
-$delays: 100, 200, 300, 400;
+// Standard styles for specific animation variants
+div[data-animate*='fadeIn'] {
+   @media (max-width: 767px) {
+      animation-delay: 0ms;
+   }
+}
 
+// Either set delay as inline style variable
+// or generate classes for list of set delays
 .fadeIn {
+   // Inline style variables
    &Left {
       animation: fadeInLeft 1s forwards;
+      animation-delay: var(--delay, 0ms);
    }
 
    &Right {
       animation: fadeInRight 1s forwards;
+      animation-delay: var(--delay, 0ms);
    }
 
    &Down {
       animation: fadeInDown 1s forwards;
+      animation-delay: var(--delay, 0ms);
    }
 
    &Up {
       animation: fadeInUp 1s forwards;
+      animation-delay: var(--delay, 0ms);
    }
+
+   // Generated classes for list of delays
+   $delays: 0, 100, 200, 300, 400;
 
    @each $delay in $delays {
       &Left--#{ $delay } {
          animation: fadeInLeft 1s forwards #{$delay}ms;
+
+         @media (max-width: 767px) {
+            animation-delay: 0ms;
+         }
       }
 
       &Right--#{ $delay } {
          animation: fadeInRight 1s forwards #{$delay}ms;
+
+         @media (max-width: 767px) {
+            animation-delay: 0ms;
+         }
       }
 
       &Down--#{ $delay } {
          animation: fadeInDown 1s forwards #{$delay}ms;
+
+         @media (max-width: 767px) {
+            animation-delay: 0ms;
+         }
       }
 
       &Up--#{ $delay } {
          animation: fadeInUp 1s forwards #{$delay}ms;
+
+         @media (max-width: 767px) {
+            animation-delay: 0ms;
+         }
       }
    }
 }
