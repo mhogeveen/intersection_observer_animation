@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
    // Select DOM elements to animate
    const entries = document.querySelectorAll('[data-animate]')
+   const parents = document.querySelectorAll('[data-parent]')
 
    // Intersection observer options
    const options = {
@@ -14,16 +15,17 @@ document.addEventListener('DOMContentLoaded', () => {
    const callback = (entries, observer) => {
       entries.forEach((entry) => {
          if (entry.isIntersecting) {
+            const element = entry.target
             // If data-animate is empty add default animation variant
             // else add given animation variant
-            if (entry.target.dataset.animate === '') {
-               entry.target.classList.add('fadeInLeft')
+            if (element.dataset.animate === '') {
+               element.classList.add('fadeInLeft')
             } else {
-               entry.target.classList.add(entry.target.dataset.animate)
+               element.classList.add(element.dataset.animate)
             }
 
             // Prevent multiple animations of the same element
-            observer.unobserve(entry.target)
+            observer.unobserve(element)
          }
       })
    }
@@ -34,5 +36,14 @@ document.addEventListener('DOMContentLoaded', () => {
    // Attach observer to each element that shoud be observed
    entries.forEach((entry) => {
       observer.observe(entry)
+   })
+
+   console.log(parents)
+   parents.forEach((parent) => {
+      const children = Array.from(parent.childNodes)
+      const noTextNodes = children.filter((node) => node.nodeName !== '#text')
+      noTextNodes.forEach((node, index) => {
+         console.log(node)
+      })
    })
 })

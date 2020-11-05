@@ -2,6 +2,7 @@
    margin: 0;
    padding: 0;
    font-size: 16px;
+   box-sizing: content-box;
 }
 
 .section {
@@ -9,6 +10,7 @@
    justify-content: center;
    align-items: center;
    gap: 2%;
+   padding: 2%;
    height: 100vh;
 
    &:nth-child(odd) {
@@ -20,11 +22,18 @@
    }
 
    &--column {
-      flex-direction: column;
+      flex-flow: wrap column;
    }
 
    &--row {
-      flex-direction: row;
+      flex-flow: wrap row;
+   }
+
+   &--grid {
+      flex-wrap: wrap;
+      .card {
+         flex-grow: 1;
+      }
    }
 }
 
