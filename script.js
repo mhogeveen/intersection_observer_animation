@@ -1,12 +1,22 @@
+// Default animation variant
+const defaultAnimation = 'fadeInLeft'
+
 document.addEventListener('DOMContentLoaded', () => {
    // Select DOM elements to animate
    const entries = document.querySelectorAll('[data-animate]')
-   const parents = document.querySelectorAll('[data-parent]')
+
+   const handleAnimationParent = (element, animationVariant, delayModifier) => {
+      const children = element.querySelectorAll('[data-animation-child]')
+      children.forEach((child, index) => {
+         child.setAttribute('style', `--delay: ${index * delayModifier}ms;`)
+         child.classList.add(animationVariant)
+      })
+   }
 
    // Intersection observer options
    const options = {
       root: null,
-      rootMargin: '0px 0px 0px 0px',
+      rootMargin: '-100px 0px -100px 0px',
       threshold: 0,
    }
 
@@ -19,7 +29,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // If data-animate is empty add default animation variant
             // else add given animation variant
             if (element.dataset.animate === '') {
-               element.classList.add('fadeInLeft')
+               element.classList.add(defaultAnimation)
+            } else if (element.dataset.animationParent !== undefined) {
+               const animationVariant = element.dataset.animate
+               const delayModifier = Number(element.dataset.animationParent)
+               handleAnimationParent(element, animationVariant, delayModifier)
             } else {
                element.classList.add(element.dataset.animate)
             }
@@ -36,14 +50,5 @@ document.addEventListener('DOMContentLoaded', () => {
    // Attach observer to each element that shoud be observed
    entries.forEach((entry) => {
       observer.observe(entry)
-   })
-
-   console.log(parents)
-   parents.forEach((parent) => {
-      const children = Array.from(parent.childNodes)
-      const noTextNodes = children.filter((node) => node.nodeName !== '#text')
-      noTextNodes.forEach((node, index) => {
-         console.log(node)
-      })
    })
 })
