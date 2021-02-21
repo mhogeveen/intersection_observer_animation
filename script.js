@@ -35,16 +35,15 @@ document.addEventListener('DOMContentLoaded', () => {
    const animateParallax = () => {
       if (!isAnimating) {
          isAnimating = true
-         const { top, height } = data.el.getBoundingClientRect()
-         console.log(top, height)
+         const { top } = data.el.getBoundingClientRect()
          let translate = []
 
          translate = data.speed.map((item, index) => {
             if (item === '0') return (translate[index] = 0)
-            return (translate[index] = Math.floor(top / Number(item)))
+            return (translate[index] = Math.floor(Math.floor(top) / Number(item)))
          })
 
-         data.el.style.transform = `translate3d(${translate[0]}px, ${translate[1]}px, ${translate[2]}px)`
+         data.el.style.transform = `translate3d(${translate[0]}px, calc(${translate[1]}px), ${translate[2]}px)`
 
          isAnimating = false
          return (animationId = requestAnimationFrame(animateParallax))
@@ -107,28 +106,34 @@ document.addEventListener('DOMContentLoaded', () => {
    const callback = (entries, observer) => {
       entries.forEach((entry) => {
          const element = entry.target
+         const dataAnimate = element.dataset.animate
          let parallaxAnimationID
          if (entry.isIntersecting) {
-            if (element.dataset.animate === '') {
-               element.classList.add(defaultAnimation)
-               observer.unobserve(element)
-            } else if (element.dataset.animationParent !== undefined) {
-               const animationVariant = element.dataset.animate
-               const delayModifier = Number(element.dataset.animationParent)
-               handleAnimationParent(element, animationVariant, delayModifier)
-               observer.unobserve(element)
-            } else if (element.dataset.animate === 'counter') {
-               element.classList.add('active')
-               animateCountUp(element)
-               observer.unobserve(element)
-            } else if (element.dataset.animate === 'parallax') {
-               parallaxAnimationID = initParallax(element)
-            } else {
-               element.classList.add(element.dataset.animate)
-               observer.unobserve(element)
+            switch (dataAnimate) {
+               case '':
+                  element.classList.add(defaultAnimation)
+                  observer.unobserve(element)
+                  break
+               case 'counter':
+                  element.classList.add('active')
+                  animateCountUp(element)
+                  observer.unobserve(element)
+                  break
+               case 'parallax':
+                  parallaxAnimationID = initParallax(element)
+                  break
+               default:
+                  if (element.dataset.animationParent !== undefined) {
+                     const delayModifier = Number(element.dataset.animationParent)
+                     handleAnimationParent(element, dataAnimate, delayModifier)
+                     observer.unobserve(element)
+                  }
+                  element.classList.add(dataAnimate)
+                  observer.unobserve(element)
+                  break
             }
-         } else if (!entry.isIntersecting) {
-            if (element.dataset.animate === 'parallax') {
+         } else {
+            if (dataAnimate === 'parallax') {
                cleanupParallax(parallaxAnimationID)
             }
          }
