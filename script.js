@@ -83,9 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
    }
    // End of count up animation code
 
-   // Select DOM elements to animate
-   const entries = document.querySelectorAll('[data-animate]')
-
+   // Start of intersection observer code
    const handleAnimationParent = (element, animationVariant, delayModifier) => {
       const children = element.querySelectorAll('[data-animation-child]')
       children.forEach((child, index) => {
@@ -94,57 +92,64 @@ document.addEventListener('DOMContentLoaded', () => {
       })
    }
 
-   // Intersection observer options
-   const options = {
-      root: null,
-      rootMargin: '-100px 0px -100px 0px',
-      threshold: 0,
-   }
-
-   // Function to run when the observer observes the intersection of
-   // an entry within entries
-   const callback = (entries, observer) => {
-      entries.forEach((entry) => {
-         const element = entry.target
-         const dataAnimate = element.dataset.animate
-         let parallaxAnimationID
-         if (entry.isIntersecting) {
-            switch (dataAnimate) {
-               case '':
-                  element.classList.add(defaultAnimation)
-                  observer.unobserve(element)
-                  break
-               case 'counter':
-                  element.classList.add('active')
-                  animateCountUp(element)
-                  observer.unobserve(element)
-                  break
-               case 'parallax':
-                  parallaxAnimationID = initParallax(element)
-                  break
-               default:
-                  if (element.dataset.animationParent !== undefined) {
-                     const delayModifier = Number(element.dataset.animationParent)
-                     handleAnimationParent(element, dataAnimate, delayModifier)
+   const observerAnimate = new IntersectionObserver(
+      (entries, observer) => {
+         entries.forEach((entry) => {
+            const element = entry.target
+            const dataAnimate = element.dataset.animate
+            if (entry.isIntersecting) {
+               switch (dataAnimate) {
+                  case '':
+                     element.classList.add(defaultAnimation)
                      observer.unobserve(element)
-                  }
-                  element.classList.add(dataAnimate)
-                  observer.unobserve(element)
-                  break
+                     break
+                  case 'counter':
+                     element.classList.add('active')
+                     animateCountUp(element)
+                     observer.unobserve(element)
+                     break
+                  default:
+                     if (element.dataset.animationParent !== undefined) {
+                        const delayModifier = Number(element.dataset.animationParent)
+                        handleAnimationParent(element, dataAnimate, delayModifier)
+                        observer.unobserve(element)
+                     }
+                     element.classList.add(dataAnimate)
+                     observer.unobserve(element)
+                     break
+               }
             }
-         } else {
-            if (dataAnimate === 'parallax') {
+         })
+      },
+      {
+         root: null,
+         rootMargin: '-100px 0px -100px 0px',
+         threshold: 0,
+      }
+   )
+
+   const observerParallax = new IntersectionObserver(
+      (entries) => {
+         entries.forEach((entry) => {
+            const element = entry.target
+            let parallaxAnimationID
+            if (entry.isIntersecting) {
+               parallaxAnimationID = initParallax(element)
+            } else {
                cleanupParallax(parallaxAnimationID)
             }
-         }
-      })
-   }
+         })
+      },
+      {
+         root: null,
+         rootMargin: '10px 0px 10px 0px',
+         threshold: 0,
+      }
+   )
 
-   // Create observer by calling constructor
-   const observer = new IntersectionObserver(callback, options)
-
-   // Attach observer to each element that shoud be observed
-   entries.forEach((entry) => {
-      observer.observe(entry)
+   document.querySelectorAll('[data-animate]').forEach((entry) => {
+      if (entry.dataset.animate === 'parallax') return observerParallax.observe(entry)
+      observerAnimate.observe(entry)
    })
+   // End of intersection observer code
 })
