@@ -15,6 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
          return setTimeout(f, 1000 / 60)
       }
 
+   const cancelAnimationFrame =
+      window.cancelAnimationFrame || window.mozCancelAnimationFrame || clearTimeout
+
    const initParallax = (el) => {
       // Cleanup before setting up new requestAnimationFrame.
       cancelAnimationFrame(animationId)
@@ -47,9 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
          return (animationId = requestAnimationFrame(animateParallax))
       }
    }
-
-   const cancelAnimationFrame =
-      window.cancelAnimationFrame || window.mozCancelAnimationFrame || clearTimeout
 
    const cleanupParallax = () => {
       cancelAnimationFrame(animationId)
@@ -109,8 +109,6 @@ document.addEventListener('DOMContentLoaded', () => {
          const element = entry.target
          let parallaxAnimationID
          if (entry.isIntersecting) {
-            // If data-animate is empty add default animation variant
-            // else add given animation variant
             if (element.dataset.animate === '') {
                element.classList.add(defaultAnimation)
                observer.unobserve(element)
@@ -129,8 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
                element.classList.add(element.dataset.animate)
                observer.unobserve(element)
             }
-
-            // Prevent multiple animations of the same element
          } else if (!entry.isIntersecting) {
             if (element.dataset.animate === 'parallax') {
                cleanupParallax(parallaxAnimationID)
