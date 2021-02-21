@@ -4,7 +4,7 @@
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <link rel="stylesheet" type="text/css" href="style.css">
-      <script src="script.js"></script>
+      <script type="module" src="script.js" defer></script>
       <title>Scroll Animation</title>
    </head>
 
@@ -29,6 +29,13 @@
             <div class="counter" data-animate="counter">99</div>
          </div>
       </div>
+      <div class="section">
+         <div class="section__container">
+            <h1>Dit is een titel.</h1>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat vero repellendus error est in explicabo exercitationem voluptates voluptatem eligendi omnis fuga, quod libero quidem eaque laudantium sit deleniti incidunt quasi.</p>
+            <img class="section__bg parallax" data-animate="parallax" data-parallax="0,-3.5,0" src="https://picsum.photos/1600/900">
+         </div>
+      </div>
       <div class="section section--row">
          <div class="card" data-animate='fadeInUp'></div>
          <div class="card" data-animate='fadeInUp' style='--delay: 150ms;'></div>
@@ -46,6 +53,13 @@
          <div class="card" data-animate='fadeInDown--100'></div>
          <div class="card" data-animate='fadeInDown--200'></div>
          <div class="card" data-animate='fadeInDown--300'></div>
+      </div>
+      <div class="section">
+         <div class="section__container">
+            <h1>Dit is een titel.</h1>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat vero repellendus error est in explicabo exercitationem voluptates voluptatem eligendi omnis fuga, quod libero quidem eaque laudantium sit deleniti incidunt quasi.</p>
+            <img class="section__bg parallax" data-animate="parallax" data-parallax="0,-3.5,0" src="https://picsum.photos/1600/900">
+         </div>
       </div>
       <div class="section section--grid" data-animate="fadeInRight" data-animation-parent='150'>
          <div class="card" data-animation-child></div>

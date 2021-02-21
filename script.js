@@ -1,7 +1,62 @@
 // Default animation variant
 const defaultAnimation = 'fadeInLeft'
+const parallaxClass = 'parallax'
 
 document.addEventListener('DOMContentLoaded', () => {
+   // Start parallax code
+   let data, speed, screenHeight, animationId, isAnimating
+
+   window.requestAnimationFrame =
+      window.requestAnimationFrame ||
+      window.mozRequestAnimationFrame ||
+      window.webkitRequestAnimationFrame ||
+      window.msRequestAnimationFrame ||
+      function (f) {
+         return setTimeout(f, 1000 / 60)
+      }
+
+   const initParallax = (el) => {
+      // Cleanup before setting up new requestAnimationFrame.
+      cancelAnimationFrame(animationId)
+
+      speed = el.getAttribute('data-parallax').split(',')
+      data = {
+         el,
+         speed,
+      }
+      screenHeight = window.innerHeight
+
+      return animateParallax()
+   }
+
+   const animateParallax = () => {
+      if (!isAnimating) {
+         isAnimating = true
+         const { top, height } = data.el.getBoundingClientRect()
+         console.log(top, height)
+         let translate = []
+
+         translate = data.speed.map((item, index) => {
+            if (item === '0') return (translate[index] = 0)
+            return (translate[index] = Math.floor(top / Number(item)))
+         })
+
+         data.el.style.transform = `translate3d(${translate[0]}px, ${translate[1]}px, ${translate[2]}px)`
+
+         isAnimating = false
+         return (animationId = requestAnimationFrame(animateParallax))
+      }
+   }
+
+   const cancelAnimationFrame =
+      window.cancelAnimationFrame || window.mozCancelAnimationFrame || clearTimeout
+
+   const cleanupParallax = () => {
+      cancelAnimationFrame(animationId)
+   }
+   // End parallax code
+
+   // Start of count up animation code
    const animationDuration = 3000 // Duration of animation in ms
    const frameDuration = 1000 / 60 // Calculate ms/frame at 60 frames/second
    const totalFrames = Math.round(animationDuration / frameDuration)
@@ -27,9 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
          }
       }, frameDuration)
    }
-
-   // const countupEls = document.querySelectorAll('.counter__count')
-   // countupEls.forEach(animateCountUp)
+   // End of count up animation code
 
    // Select DOM elements to animate
    const entries = document.querySelectorAll('[data-animate]')
@@ -53,25 +106,35 @@ document.addEventListener('DOMContentLoaded', () => {
    // an entry within entries
    const callback = (entries, observer) => {
       entries.forEach((entry) => {
+         const element = entry.target
+         let parallaxAnimationID
          if (entry.isIntersecting) {
-            const element = entry.target
             // If data-animate is empty add default animation variant
             // else add given animation variant
             if (element.dataset.animate === '') {
                element.classList.add(defaultAnimation)
+               observer.unobserve(element)
             } else if (element.dataset.animationParent !== undefined) {
                const animationVariant = element.dataset.animate
                const delayModifier = Number(element.dataset.animationParent)
                handleAnimationParent(element, animationVariant, delayModifier)
+               observer.unobserve(element)
             } else if (element.dataset.animate === 'counter') {
                element.classList.add('active')
                animateCountUp(element)
+               observer.unobserve(element)
+            } else if (element.dataset.animate === 'parallax') {
+               parallaxAnimationID = initParallax(element)
             } else {
                element.classList.add(element.dataset.animate)
+               observer.unobserve(element)
             }
 
             // Prevent multiple animations of the same element
-            observer.unobserve(element)
+         } else if (!entry.isIntersecting) {
+            if (element.dataset.animate === 'parallax') {
+               cleanupParallax(parallaxAnimationID)
+            }
          }
       })
    }
