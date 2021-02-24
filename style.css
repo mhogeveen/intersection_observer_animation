@@ -40,7 +40,7 @@ h1 {
 }
 .section__container {
   position: relative;
-  overflow-y: hidden;
+  overflow: hidden;
   width: 80vw;
   height: 80vh;
   display: flex;

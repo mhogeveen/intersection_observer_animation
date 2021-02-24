@@ -4,7 +4,7 @@ const parallaxClass = 'parallax'
 
 document.addEventListener('DOMContentLoaded', () => {
    // Start parallax code
-   let data, speed, screenHeight, animationId, isAnimating
+   let data, transform, screenHeight, animationId, isAnimating
 
    window.requestAnimationFrame =
       window.requestAnimationFrame ||
@@ -22,10 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
       // Cleanup before setting up new requestAnimationFrame.
       cancelAnimationFrame(animationId)
 
-      speed = el.getAttribute('data-parallax').split(',')
+      transform = el.getAttribute('data-parallax').split(',')
       data = {
          el,
-         speed,
+         transform,
       }
       screenHeight = window.innerHeight
 
@@ -38,12 +38,13 @@ document.addEventListener('DOMContentLoaded', () => {
          const { top } = data.el.getBoundingClientRect()
          let translate = []
 
-         translate = data.speed.map((item, index) => {
+         translate = data.transform.map((item, index) => {
             if (item === '0') return (translate[index] = 0)
+            if (index === 3) return item
             return (translate[index] = Math.floor(Math.floor(top) / Number(item)))
          })
 
-         data.el.style.transform = `translate3d(${translate[0]}px, calc(${translate[1]}px), ${translate[2]}px)`
+         data.el.style.transform = `translate3d(${translate[0]}px, ${translate[1]}px, ${translate[2]}px) scale(${translate[3]})`
 
          isAnimating = false
          return (animationId = requestAnimationFrame(animateParallax))
