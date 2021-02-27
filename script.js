@@ -134,8 +134,10 @@ document.addEventListener('DOMContentLoaded', () => {
          entries.forEach((entry) => {
             const element = entry.target
             let parallaxAnimationID
-            if (entry.isIntersecting) {
-               parallaxAnimationID = initParallax(element)
+            if (entry.isIntersecting || entry.intersectionRatio > 0) {
+               setTimeout(() => {
+                  parallaxAnimationID = initParallax(element)
+               }, 10)
             } else {
                cleanupParallax(parallaxAnimationID)
             }
