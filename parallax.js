@@ -75,3 +75,9 @@ document.addEventListener('DOMContentLoaded', () => {
          threshold: 0,
       }
    )
+
+   document.querySelectorAll('[data-parallax]').forEach((entry) => {
+      observerParallax.observe(entry)
+   })
+   // End of intersection observer code
+})
